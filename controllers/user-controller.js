@@ -72,17 +72,73 @@ module.exports = (app) => {
   };
 
   const addFollowers = async (req, res) => {
-    await User.findOne({ _id: req.params.toId }).exec((err, user) => {
+    await User.findOne({ _id: req.params.toId }).exec((err, toUser) => {
       if (err) {
         res.send({ message: err });
       } else {
-        console.log(user);
-        user.followers.push(req.params.fromId);
-        user.save();
-        res.send({ message: 'success' });
+        console.log(toUser);
+        toUser.followers.push(req.params.fromId);
+
+        User.findOne({ _id: req.params.fromId }).exec((err, fromUser) => {
+          if (err) {
+            res.send({ message: err });
+          } else {
+            fromUser.followings.push(req.params.toId);
+
+            toUser.save();
+            fromUser.save();
+            res.send({ message: 'success' });
+          }
+        });
       }
     });
   };
+
+  const removeFollowers = async (req, res) => {
+    await User.updateOne(
+      { _id: req.params.toId },
+      { $pull: { followers: { _id: req.params.fromId } } },
+      (err, toUser) => {
+        if (err || !toUser) {
+          res.send({ message: err });
+        } else {
+          User.updateOne(
+            { _id: req.params.fromId },
+            { $pull: { followings: { _id: req.params.toId } } },
+            (err, fromUser) => {
+              if (err || !fromUser) {
+                res.send({ message: err });
+              } else {
+                res.send({ message: 'success' });
+              }
+            }
+          );
+        }
+      }
+    );
+  };
+
+  //     ).exec((err, toUser) => {
+  //     if (err) {
+  //       res.send({ message: err });
+  //     } else {
+  //       console.log(toUser);
+  //       toUser.followers.pull(req.params.fromId);
+
+  //       User.findOne({ _id: req.params.fromId }).exec((err, fromUser) => {
+  //         if (err) {
+  //           res.send({ message: err });
+  //         } else {
+  //           fromUser.followings.pull(req.params.toId);
+
+  //           toUser.save();
+  //           fromUser.save();
+  //           res.send({ message: 'success' });
+  //         }
+  //       });
+  //     }
+  //   });
+  // }
 
   const userLogin = async (req, res) => {
     console.log(req.body.userName);
@@ -109,6 +165,17 @@ module.exports = (app) => {
     });
   };
 
+  const findUserBySpotifyId = async (req, res) => {
+    await User.findOne({ spotifyId: req.params.id }).exec((err, user) => {
+      if (err || user === null) {
+        res.send({ message: 'error' });
+      } else {
+        console.log(user);
+        res.json(user);
+      }
+    });
+  };
+
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
   app.post('/api/create-user', createUser);
@@ -117,4 +184,6 @@ module.exports = (app) => {
   app.post('/api/login', userLogin);
   app.post('/api/follow/:fromId/:toId', addFollowers);
   app.get('/api/find-users/:query', findUsersByName);
+  app.get('/api/find-user/spotifyId/:id', findUserBySpotifyId);
+  app.post('/api/follow-remove/:fromId/:toId', removeFollowers);
 };

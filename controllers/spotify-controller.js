@@ -19,6 +19,7 @@ module.exports = (app) => {
 
   app.get('/api/spotifylogin/:userName', (req, res) => {
     const username = req.params.userName;
+    console.log('username is ' + username);
     var scope =
       'ugc-image-upload%20user-read-recently-played%20' +
       'user-read-playback-position%20user-top-read%20' +
@@ -63,9 +64,9 @@ module.exports = (app) => {
           };
           request.get(authOptions, (error, response, body) => {
             if (error) {
-              console.log(error);
+              console.log('line 67 ' + error);
             } else {
-              User.findOneAndUpdate(
+              User.updateOne(
                 { userName: username },
                 {
                   $set: {
@@ -74,12 +75,9 @@ module.exports = (app) => {
                     spotifyId: JSON.parse(response.body).id,
                   },
                 },
-                {
-                  upsert: true,
-                },
                 (err, updatedUser) => {
                   if (err || !updatedUser) {
-                    console.log(err);
+                    console.log('line 80 ' + err);
                   } else {
                     console.log(updatedUser);
                   }
@@ -129,8 +127,8 @@ module.exports = (app) => {
   // -----------------------------------------------------------------
 
   //find playlist for user
-  app.get('/api/:id/playlists', (req, res) => {
-    User.findOne({ _id: req.params.id }).exec((err, one) => {
+  app.get('/api/:id/playlists', async (req, res) => {
+    await User.findOne({ _id: req.params.id }).exec((err, one) => {
       if (err) {
         res.send({ message: err });
       } else {
@@ -138,11 +136,14 @@ module.exports = (app) => {
           url: 'https://api.spotify.com/v1/users/' + one.spotifyId + '/playlists',
           headers: { Authorization: 'Bearer ' + constant_access_token },
         };
-        request.get(authOptions, (error, response, body) => {
+        request.get(authOptions, async (error, response, body) => {
           if (error) {
             console.log(error);
           } else {
-            res.send(response.body);
+            //    console.log(JSON.parse(response.body));
+            const items = JSON.parse(response.body).items;
+
+            res.send(items);
           }
         });
       }
@@ -171,18 +172,20 @@ module.exports = (app) => {
   });
 
   //search for playlist
-  app.get('/api/playlists/:query', (req, res) => {
+  app.get('/api/playlists/:query', async (req, res) => {
     var query = req.params.query;
     query.replace(' ', '%20');
     var authOptions = {
       url: 'https://api.spotify.com/v1/search?q=' + query + '&type=playlist',
       headers: { Authorization: 'Bearer ' + constant_access_token },
     };
-    request.get(authOptions, (error, response, body) => {
+    request.get(authOptions, async (error, response, body) => {
       if (error) {
         console.log(error);
       } else {
-        res.send(response.body);
+        const items = JSON.parse(response.body).playlists.items;
+
+        res.send(items);
       }
     });
   });
