@@ -206,27 +206,5 @@ module.exports = (app) => {
     });
   });
 
-  app.get('/api/profile/:profileId/playlists/:userName', (req, res) => {
-    let profileId = req.params.profileId;
-    let username = req.params.userName;
-
-    retrieveAllTokens(client).then((tokens) => {
-      user_tokens = tokens.find((user) => user['username'] == userName);
-      var authOptions = {
-        url: 'https://api.spotify.com/v1/users/' + profileId + '/playlists',
-        headers: { Authorization: 'Bearer ' + user_tokens['access_token'] },
-      };
-      request.get(authOptions, (error, response, body) => {
-        if (error) {
-          console.log(error);
-        } else {
-          res.json({
-            results: response.body,
-          });
-        }
-      });
-    });
-  });
-
   //-------------
 };

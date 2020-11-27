@@ -118,28 +118,6 @@ module.exports = (app) => {
     );
   };
 
-  //     ).exec((err, toUser) => {
-  //     if (err) {
-  //       res.send({ message: err });
-  //     } else {
-  //       console.log(toUser);
-  //       toUser.followers.pull(req.params.fromId);
-
-  //       User.findOne({ _id: req.params.fromId }).exec((err, fromUser) => {
-  //         if (err) {
-  //           res.send({ message: err });
-  //         } else {
-  //           fromUser.followings.pull(req.params.toId);
-
-  //           toUser.save();
-  //           fromUser.save();
-  //           res.send({ message: 'success' });
-  //         }
-  //       });
-  //     }
-  //   });
-  // }
-
   const userLogin = async (req, res) => {
     console.log(req.body.userName);
     console.log(req.body.password);
