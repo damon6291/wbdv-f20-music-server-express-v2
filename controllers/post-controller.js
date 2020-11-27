@@ -23,6 +23,22 @@ module.exports = (app) => {
     }
   };
 
+  const removePost = async (req, res) => {
+    await Post.findByIdAndDelete(
+      {
+        _id: req.params.id,
+      },
+      (err, deletedPost) => {
+        if (err) {
+          res.send({ message: err });
+        } else {
+          res.send(deletedPost);
+        }
+      }
+    );
+  };
+
   app.get('/api/posts', findAllPosts);
   app.post('/api/create-post', createPost);
+  app.delete('/api/remove-post/:id', removePost);
 };
