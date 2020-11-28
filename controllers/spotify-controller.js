@@ -18,8 +18,8 @@ module.exports = (app) => {
   var redirect_uri = `${serverUrl}post_authentication`;
 
   app.get('/api/spotifylogin/:userName', (req, res) => {
-    const USERNAME1 = ('' + req.params.userName).slice(1);
-    console.log('username is ' + USERNAME1);
+    USERNAME = req.params.userName
+    console.log('username is ' + USERNAME);
     var scope =
       'ugc-image-upload%20user-read-recently-played%20' +
       'user-read-playback-position%20user-top-read%20' +
@@ -66,9 +66,9 @@ module.exports = (app) => {
             if (error) {
               console.log('line 67 ' + error);
             } else {
-              console.log(USERNAME1)
+              console.log(USERNAME)
               User.updateOne(
-                { userName: USERNAME1 },
+                { userName: USERNAME },
                 {
                   $set: {
                     accessToken: bodyA.access_token,
