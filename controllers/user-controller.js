@@ -1,6 +1,25 @@
 const User = require('../models/user');
+const session = require('express-session');
 
 module.exports = (app) => {
+  app.use(
+    session({
+      secret: 'keyboard cat',
+      resave: false,
+      saveUninitialized: true,
+    })
+  );
+
+  // app.use(function (req, res, next) {
+  //   if (!req.session.cur) {
+  //     req.session.cur = 'error';
+  //   }
+  //   // count the views
+  //   req.session.cur = (req.session.views[pathname] || 0) + 1;
+
+  //   next();
+  // });
+
   const findAllUsers = async (req, res) => {
     await User.find({}).exec((err, users) => {
       if (err) {
@@ -28,7 +47,7 @@ module.exports = (app) => {
       // let username = req.body.userName
       // let password = req.body.password
       // // let displayName = req.body.displayName
-      
+
       // // check if username already exists
       // await User.find({ userName: username }).exec((err, users) => {
       //   if (!err) {
@@ -50,7 +69,6 @@ module.exports = (app) => {
       //   res.send({message: 'error'})
       //   return;
       // }
-
 
       await newUser.save();
       res.send({ message: 'success' });
@@ -154,7 +172,10 @@ module.exports = (app) => {
         if (err || login === null) {
           res.send({ message: 'error' });
         } else {
-          console.log(login);
+          console.log(login._id);
+          req.session.cur = login._id;
+          console.log(req.session);
+          console.log(req.session.cur);
           res.send({ message: login._id });
         }
       }
@@ -182,6 +203,17 @@ module.exports = (app) => {
     });
   };
 
+  const findCurrentUser = (req, res) => {
+    const cur = req.session.cur;
+    console.log(req.session);
+    cur === undefined ? res.send({ message: 'error' }) : res.send(cur);
+  };
+
+  const logout = (req, res) => {
+    req.session.destroy();
+    res.send(200);
+  };
+
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
   app.post('/api/create-user', createUser);
@@ -192,4 +224,6 @@ module.exports = (app) => {
   app.get('/api/find-users/:query', findUsersByName);
   app.get('/api/find-user/spotifyId/:id', findUserBySpotifyId);
   app.post('/api/follow-remove/:fromId/:toId', removeFollowers);
+  app.get('/api/find-currentuser', findCurrentUser);
+  app.get('/api/logout', logout);
 };
