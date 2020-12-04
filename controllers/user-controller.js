@@ -205,8 +205,8 @@ module.exports = (app) => {
 
   const findCurrentUser = (req, res) => {
     const cur = req.session.cur;
-    console.log(req.session);
-    cur === undefined ? res.send({ message: 'error' }) : res.send(cur);
+    console.log(cur);
+    cur === undefined ? res.send({ message: 'error' }) : res.send({ message: cur });
   };
 
   const logout = (req, res) => {
