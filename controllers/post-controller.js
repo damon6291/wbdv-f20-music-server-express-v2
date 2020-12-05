@@ -32,7 +32,7 @@ module.exports = (app) => {
         if (err) {
           res.send({ message: err });
         } else {
-          res.send(deletedPost);
+          res.send([{ message: 'success' }]);
         }
       }
     );
