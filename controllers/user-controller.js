@@ -100,8 +100,8 @@ module.exports = (app) => {
       {
         $set: {
           displayName: req.body.displayName,
-          userName: req.body.userName,
-          password: req.body.password,
+          phone: req.body.phone,
+          email: req.body.email,
         },
       },
       {
