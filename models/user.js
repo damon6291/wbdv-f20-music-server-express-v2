@@ -11,6 +11,7 @@ const User = new mongoose.Schema({
   posts: [{ postId: Number }],
   followers: [{ followerId: Number }],
   followings: [{ followingId: Number }],
+  search: [{ query: String }],
 });
 
 module.exports = mongoose.model('user', User);

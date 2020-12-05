@@ -165,17 +165,12 @@ module.exports = (app) => {
   };
 
   const userLogin = async (req, res) => {
-    console.log(req.body.userName);
-    console.log(req.body.password);
     await User.findOne({ userName: req.body.userName, password: req.body.password }).exec(
       (err, login) => {
         if (err || login === null) {
           res.send({ message: 'error' });
         } else {
-          console.log(login._id);
           req.session.cur = login._id;
-          console.log(req.session);
-          console.log(req.session.cur);
           res.send({ message: login._id });
         }
       }
@@ -205,13 +200,33 @@ module.exports = (app) => {
 
   const findCurrentUser = (req, res) => {
     const cur = req.session.cur;
-    console.log(cur);
     cur === undefined ? res.send({ message: 'error' }) : res.send({ message: cur });
   };
 
   const logout = (req, res) => {
     req.session.destroy();
     res.send(200);
+  };
+
+  const addSearch = async (req, res) => {
+    try {
+      await User.updateOne({ _id: req.params.id }, { $push: { search: req.body } });
+      await User.updateOne({ _id: req.params.id }, { $unset: { 'search.0': 1 } });
+      await User.updateOne({ _id: req.params.id }, { $pull: { search: null } });
+      res.send({ message: 'success' });
+    } catch (err) {
+      console.log(err);
+      res.send({ message: 'error' });
+    }
+
+    // await User.findOne({ _id: req.params.Id }).exec((err, user) => {
+    //   if (err) {
+    //     res.send({ message: 'error' });
+    //   } else {
+    //     user.search.push(req.body.query);
+    //     res.send({ message: 'success' });
+    //   }
+    // });
   };
 
   app.get('/api/users', findAllUsers);
@@ -226,4 +241,5 @@ module.exports = (app) => {
   app.post('/api/follow-remove/:fromId/:toId', removeFollowers);
   app.get('/api/find-currentuser', findCurrentUser);
   app.get('/api/logout', logout);
+  app.post('/api/add-search/:id', addSearch);
 };
