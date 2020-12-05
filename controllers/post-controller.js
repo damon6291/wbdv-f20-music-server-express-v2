@@ -38,7 +38,21 @@ module.exports = (app) => {
     );
   };
 
+  const findAllPostsId = async (req, res) => {
+    console.log("im in here")
+    playlistId = req.params.playlistId
+    await Post.find({playlistId: playlistId}).exec((err,posts) => {
+      if (err) {
+        res.send({message: err});
+      }
+      else {
+        res.send(posts);
+      }
+    });
+  }
+
   app.get('/api/posts', findAllPosts);
   app.post('/api/create-post', createPost);
   app.delete('/api/remove-post/:id', removePost);
+  app.get('/api/findPosts/:playlistId', findAllPostsId);
 };
