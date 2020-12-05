@@ -178,13 +178,15 @@ module.exports = (app) => {
   };
 
   const findUsersByName = async (req, res) => {
-    await User.find({ displayName: req.params.query }).exec((err, users) => {
-      if (err) {
-        res.send({ message: err });
-      } else {
-        res.json(users);
+    await User.find({ displayName: { $regex: new RegExp(req.params.query, 'i') } }).exec(
+      (err, users) => {
+        if (err) {
+          res.send({ message: err });
+        } else {
+          res.json(users);
+        }
       }
-    });
+    );
   };
 
   const findUserBySpotifyId = async (req, res) => {
