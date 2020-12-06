@@ -256,6 +256,28 @@ module.exports = (app) => {
     }
   }
 
+  const getRole = async(req,res) => {
+    await User.findOne({ _id: req.params.id }).exec((err, user) => {
+      if (err) {
+        res.send({ message: err });
+      } else {
+        res.json(user.role);
+      }
+    });
+  }
+
+  const changeRole = async(req,res) => {
+    currentRole = req.body.role;
+    if (currentRole === 'Admin'){
+      await User.updateOne({_id: req.params.id}, {$set: {role: 'User'}});
+      res.send({message:'success'})
+    }
+    else {
+      await User.updateOne({_id:req.params.id}, {$set: {role: 'Admin'}})
+      res.send({message:'success'})
+    }
+  }
+
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
   app.post('/api/create-user', createUser);
@@ -272,4 +294,6 @@ module.exports = (app) => {
   app.get('/api/all-users', findAllUsers);
   app.post('/api/editPhoneNumber/:id', editPhoneNumber);
   app.post('/api/editEmail/:id', editEmail);
+  app.get('api/check-role/:id', getRole);
+  app.post('api/change-role/:id', changeRole);
 };
