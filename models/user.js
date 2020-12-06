@@ -14,6 +14,7 @@ const User = new mongoose.Schema({
   search: [{ query: String }],
   email: String,
   phone: String,
+  role: String
 });
 
 module.exports = mongoose.model('user', User);

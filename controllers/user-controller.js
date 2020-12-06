@@ -231,6 +231,31 @@ module.exports = (app) => {
     // });
   };
 
+  const editPhoneNumber = async (req, res) => {
+    userId = req.params.user
+    phoneNumber = req.body.phoneNumber
+  
+    try {
+      await User.updateOne({_id: userId}, {$set: {phone: phoneNumber}});
+      res.send({message: 'success'});
+    }
+    catch(err) {
+      res.send({message: 'error'});
+    }
+  }
+
+  const editEmail = async(req, res) => {
+    userId = req.params.id
+    email = req.body.email
+    try {
+      await User.updateOne({_id: userId}, {$set: {phone: phoneNumber}});
+      res.send({message: 'success'});
+    }
+    catch(err) {
+      res.send({message: 'error'});
+    }
+  }
+
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
   app.post('/api/create-user', createUser);
@@ -244,4 +269,7 @@ module.exports = (app) => {
   app.get('/api/find-currentuser', findCurrentUser);
   app.get('/api/logout', logout);
   app.post('/api/add-search/:id', addSearch);
+  app.get('/api/all-users', findAllUsers);
+  app.post('/api/editPhoneNumber/:id', editPhoneNumber);
+  app.post('/api/editEmail/:id', editEmail);
 };
