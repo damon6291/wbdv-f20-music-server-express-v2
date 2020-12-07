@@ -14,7 +14,11 @@ const User = new mongoose.Schema({
   search: [{ query: String }],
   email: String,
   phone: String,
-  role: String
+  role: {
+    type: String,
+    enum: ['User', 'Admin'],
+    default: 'User',
+  },
 });
 
 module.exports = mongoose.model('user', User);

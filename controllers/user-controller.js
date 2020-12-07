@@ -103,6 +103,7 @@ module.exports = (app) => {
           displayName: req.body.displayName,
           phone: req.body.phone,
           email: req.body.email,
+          role: req.body.role,
         },
       },
       {
@@ -267,11 +268,14 @@ module.exports = (app) => {
 
   const changeRole = async (req, res) => {
     currentRole = req.body.role;
+    console.log('change role');
     if (currentRole === 'Admin') {
       await User.updateOne({ _id: req.params.id }, { $set: { role: 'User' } });
+      console.log('User');
       res.send({ message: 'success' });
     } else {
       await User.updateOne({ _id: req.params.id }, { $set: { role: 'Admin' } });
+      console.log('Admin');
       res.send({ message: 'success' });
     }
   };
@@ -292,6 +296,6 @@ module.exports = (app) => {
   app.get('/api/all-users', findAllUsers);
   app.post('/api/editPhoneNumber/:id', editPhoneNumber);
   app.post('/api/editEmail/:id', editEmail);
-  app.get('api/check-role/:id', getRole);
-  app.post('api/change-role/:id', changeRole);
+  app.get('/api/check-role/:id', getRole);
+  app.post('/api/change-role/:id', changeRole);
 };
