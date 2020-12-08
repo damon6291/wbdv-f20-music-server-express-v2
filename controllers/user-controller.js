@@ -99,9 +99,11 @@ module.exports = (app) => {
       },
       {
         $set: {
+          userName: req.body.userName,
           displayName: req.body.displayName,
           phone: req.body.phone,
           email: req.body.email,
+          role: req.body.role,
         },
       },
       {
@@ -232,31 +234,29 @@ module.exports = (app) => {
   };
 
   const editPhoneNumber = async (req, res) => {
-    userId = req.params.user
-    phoneNumber = req.body.phoneNumber
-  
-    try {
-      await User.updateOne({_id: userId}, {$set: {phone: phoneNumber}});
-      res.send({message: 'success'});
-    }
-    catch(err) {
-      res.send({message: 'error'});
-    }
-  }
+    userId = req.params.user;
+    phoneNumber = req.body.phoneNumber;
 
-  const editEmail = async(req, res) => {
-    userId = req.params.id
-    email = req.body.email
     try {
-      await User.updateOne({_id: userId}, {$set: {phone: phoneNumber}});
-      res.send({message: 'success'});
+      await User.updateOne({ _id: userId }, { $set: { phone: phoneNumber } });
+      res.send({ message: 'success' });
+    } catch (err) {
+      res.send({ message: 'error' });
     }
-    catch(err) {
-      res.send({message: 'error'});
-    }
-  }
+  };
 
-  const getRole = async(req,res) => {
+  const editEmail = async (req, res) => {
+    userId = req.params.id;
+    email = req.body.email;
+    try {
+      await User.updateOne({ _id: userId }, { $set: { phone: phoneNumber } });
+      res.send({ message: 'success' });
+    } catch (err) {
+      res.send({ message: 'error' });
+    }
+  };
+
+  const getRole = async (req, res) => {
     await User.findOne({ _id: req.params.id }).exec((err, user) => {
       if (err) {
         res.send({ message: err });
@@ -264,19 +264,21 @@ module.exports = (app) => {
         res.json(user.role);
       }
     });
-  }
+  };
 
-  const changeRole = async(req,res) => {
+  const changeRole = async (req, res) => {
     currentRole = req.body.role;
-    if (currentRole === 'Admin'){
-      await User.updateOne({_id: req.params.id}, {$set: {role: 'User'}});
-      res.send({message:'success'})
+    console.log('change role');
+    if (currentRole === 'Admin') {
+      await User.updateOne({ _id: req.params.id }, { $set: { role: 'User' } });
+      console.log('User');
+      res.send({ message: 'success' });
+    } else {
+      await User.updateOne({ _id: req.params.id }, { $set: { role: 'Admin' } });
+      console.log('Admin');
+      res.send({ message: 'success' });
     }
-    else {
-      await User.updateOne({_id:req.params.id}, {$set: {role: 'Admin'}})
-      res.send({message:'success'})
-    }
-  }
+  };
 
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
@@ -294,6 +296,6 @@ module.exports = (app) => {
   app.get('/api/all-users', findAllUsers);
   app.post('/api/editPhoneNumber/:id', editPhoneNumber);
   app.post('/api/editEmail/:id', editEmail);
-  app.get('api/check-role/:id', getRole);
-  app.post('api/change-role/:id', changeRole);
+  app.get('/api/check-role/:id', getRole);
+  app.post('/api/change-role/:id', changeRole);
 };
