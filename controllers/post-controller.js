@@ -56,7 +56,7 @@ module.exports = (app) => {
     try {
       await Post.deleteMany({ userId: userID });
       console.log('success');
-      res.send('success');
+      res.send({ message: 'success' });
     } catch (err) {
       console.log('error');
     }
@@ -66,5 +66,5 @@ module.exports = (app) => {
   app.post('/api/create-post', createPost);
   app.delete('/api/remove-post/:id', removePost);
   app.get('/api/findPosts/:playlistId', findAllPostsId);
-  app.get('/api/deletePosts/:userId', deletePosts);
+  app.delete('/api/deletePosts/:userId', deletePosts);
 };
