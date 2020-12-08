@@ -19,6 +19,10 @@ const User = new mongoose.Schema({
     enum: ['User', 'Admin'],
     default: 'User',
   },
+  img: {
+    data: Buffer,
+    contentType: String,
+  },
 });
 
 module.exports = mongoose.model('user', User);

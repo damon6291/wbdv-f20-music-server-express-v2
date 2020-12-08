@@ -1,5 +1,19 @@
 const User = require('../models/user');
 const session = require('express-session');
+var fs = require('fs');
+var path = require('path');
+var multer = require('multer');
+
+// var storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, 'uploads');
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, file.fieldname + '-' + Date.now());
+//   },
+// });
+
+// var upload = multer({ storage: storage });
 
 module.exports = (app) => {
   app.use(
@@ -41,6 +55,9 @@ module.exports = (app) => {
   };
 
   const createUser = async (req, res) => {
+    // console.log(req.file);
+    // console.log(req.body);
+    //console.log(fs.readFileSync(path.join(__dirname + '/uploads/' + req.file)));
     try {
       const newUser = new User(req.body);
 
@@ -191,16 +208,16 @@ module.exports = (app) => {
     );
   };
 
-  const findUserBySpotifyId = async (req, res) => {
-    await User.findOne({ spotifyId: req.params.id }).exec((err, user) => {
-      if (err || user === null) {
-        res.send({ message: 'error' });
-      } else {
-        console.log(user);
-        res.json(user);
-      }
-    });
-  };
+  // const findUserBySpotifyId = async (req, res) => {
+  //   await User.findOne({ spotifyId: req.params.id }).exec((err, user) => {
+  //     if (err || user === null) {
+  //       res.send({ message: 'error' });
+  //     } else {
+  //       console.log(user);
+  //       res.json(user);
+  //     }
+  //   });
+  // };
 
   const findCurrentUser = (req, res) => {
     const cur = req.session.cur;
@@ -280,6 +297,26 @@ module.exports = (app) => {
     }
   };
 
+  // app.post('/api/image/:id', upload.single('image'), async (req, res, next) => {
+  //   console.log(fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)));
+  //   try {
+  //     await User.updateOne(
+  //       { _id: req.params.id },
+  //       {
+  //         $set: {
+  //           img: {
+  //             data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
+  //             contentType: 'image/png',
+  //           },
+  //         },
+  //       }
+  //     );
+  //     res.send({ message: 'success' });
+  //   } catch (err) {
+  //     res.send({ message: 'error' });
+  //   }
+  // });
+
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
   app.post('/api/create-user', createUser);
@@ -288,7 +325,7 @@ module.exports = (app) => {
   app.post('/api/login', userLogin);
   app.post('/api/follow/:fromId/:toId', addFollowers);
   app.get('/api/find-users/:query', findUsersByName);
-  app.get('/api/find-user/spotifyId/:id', findUserBySpotifyId);
+  //app.get('/api/find-user/spotifyId/:id', findUserBySpotifyId);
   app.post('/api/follow-remove/:fromId/:toId', removeFollowers);
   app.get('/api/find-currentuser', findCurrentUser);
   app.get('/api/logout', logout);

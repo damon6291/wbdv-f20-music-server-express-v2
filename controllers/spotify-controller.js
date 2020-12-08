@@ -18,7 +18,7 @@ module.exports = (app) => {
   var redirect_uri = `${serverUrl}post_authentication`;
 
   app.get('/api/spotifylogin/:userName', (req, res) => {
-    USERNAME = req.params.userName
+    USERNAME = req.params.userName;
     console.log('username is ' + USERNAME);
     var scope =
       'ugc-image-upload%20user-read-recently-played%20' +
@@ -66,7 +66,7 @@ module.exports = (app) => {
             if (error) {
               console.log('line 67 ' + error);
             } else {
-              console.log(USERNAME)
+              console.log(USERNAME);
               User.updateOne(
                 { userName: USERNAME },
                 {
@@ -130,6 +130,8 @@ module.exports = (app) => {
   //find playlist for user
   app.get('/api/:id/playlists', async (req, res) => {
     await User.findOne({ _id: req.params.id }).exec((err, one) => {
+      console.log(req.params.id);
+      console.log(one);
       if (err) {
         res.send({ message: err });
       } else {
@@ -154,6 +156,8 @@ module.exports = (app) => {
   //find user's spotify profile
   app.get('/api/profile/:id', (req, res) => {
     User.findOne({ _id: req.params.id }).exec((err, one) => {
+      console.log(req.params.id);
+      console.log(one);
       if (err) {
         res.send({ message: err });
       } else {

@@ -39,29 +39,28 @@ module.exports = (app) => {
   };
 
   const findAllPostsId = async (req, res) => {
-    console.log("im in here")
-    playlistId = req.params.playlistId
-    await Post.find({playlistId: playlistId}).exec((err,posts) => {
+    console.log('im in here');
+    playlistId = req.params.playlistId;
+    await Post.find({ playlistId: playlistId }).exec((err, posts) => {
       if (err) {
-        res.send({message: err});
-      }
-      else {
+        res.send({ message: err });
+      } else {
         res.send(posts);
       }
     });
-  }
+  };
 
-  const deletePosts = () => {
-    userID = req.params.userId
-    await Post.deleteMany({userId: userID}).exec((err, posts) => {
-      if (err) {
-        res.send({message:err});
-      }
-      else {
-        res.send("success")
-      }
-    })
-  }
+  const deletePosts = async (req, res) => {
+    console.log('delete posts');
+    userID = req.params.userId;
+    try {
+      await Post.deleteMany({ userId: userID });
+      console.log('success');
+      res.send('success');
+    } catch (err) {
+      console.log('error');
+    }
+  };
 
   app.get('/api/posts', findAllPosts);
   app.post('/api/create-post', createPost);

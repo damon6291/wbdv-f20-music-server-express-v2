@@ -16,6 +16,7 @@ app.use(function (req, res, next) {
   next();
 });
 
+app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 
 //Connecting to MongoDB
