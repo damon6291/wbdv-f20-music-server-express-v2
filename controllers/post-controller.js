@@ -51,8 +51,21 @@ module.exports = (app) => {
     });
   }
 
+  const deletePosts = () => {
+    userID = req.params.userId
+    await Post.deleteMany({userId: userID}).exec((err, posts) => {
+      if (err) {
+        res.send({message:err});
+      }
+      else {
+        res.send("success")
+      }
+    })
+  }
+
   app.get('/api/posts', findAllPosts);
   app.post('/api/create-post', createPost);
   app.delete('/api/remove-post/:id', removePost);
   app.get('/api/findPosts/:playlistId', findAllPostsId);
+  app.get('/api/deletePosts/:userId', deletePosts);
 };
