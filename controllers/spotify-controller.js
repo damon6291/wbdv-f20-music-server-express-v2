@@ -13,8 +13,8 @@ module.exports = (app) => {
 
   // var serverUrl = 'http://localhost:8080/';
   // var clientUrl = 'http://localhost:3000/';
-  var serverUrl = 'http://wbdv-f20-music-server.herokuapp.com/';
-  var clientUrl = 'http://wbdv-f20-music.herokuapp.com/';
+  var serverUrl = 'https://wbdv-f20-music-server.herokuapp.com/';
+  var clientUrl = 'https://wbdv-f20-music.herokuapp.com/';
 
   var redirect_uri = `${serverUrl}post_authentication`;
 
