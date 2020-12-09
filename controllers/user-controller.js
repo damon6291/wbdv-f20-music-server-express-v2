@@ -1,19 +1,5 @@
 const User = require('../models/user');
 const session = require('express-session');
-var fs = require('fs');
-var path = require('path');
-var multer = require('multer');
-
-// var storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'uploads');
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, file.fieldname + '-' + Date.now());
-//   },
-// });
-
-// var upload = multer({ storage: storage });
 
 module.exports = (app) => {
   app.use(
@@ -23,16 +9,6 @@ module.exports = (app) => {
       saveUninitialized: true,
     })
   );
-
-  // app.use(function (req, res, next) {
-  //   if (!req.session.cur) {
-  //     req.session.cur = 'error';
-  //   }
-  //   // count the views
-  //   req.session.cur = (req.session.views[pathname] || 0) + 1;
-
-  //   next();
-  // });
 
   const findAllUsers = async (req, res) => {
     await User.find({}).exec((err, users) => {
@@ -55,9 +31,6 @@ module.exports = (app) => {
   };
 
   const createUser = async (req, res) => {
-    // console.log(req.file);
-    // console.log(req.body);
-    //console.log(fs.readFileSync(path.join(__dirname + '/uploads/' + req.file)));
     try {
       const newUser = new User(req.body);
 
@@ -208,17 +181,6 @@ module.exports = (app) => {
     );
   };
 
-  // const findUserBySpotifyId = async (req, res) => {
-  //   await User.findOne({ spotifyId: req.params.id }).exec((err, user) => {
-  //     if (err || user === null) {
-  //       res.send({ message: 'error' });
-  //     } else {
-  //       console.log(user);
-  //       res.json(user);
-  //     }
-  //   });
-  // };
-
   const findCurrentUser = (req, res) => {
     const cur = req.session.cur;
     cur === undefined ? res.send({ message: 'error' }) : res.send({ message: cur });
@@ -231,91 +193,20 @@ module.exports = (app) => {
 
   const addSearch = async (req, res) => {
     try {
+      const u = await User.findById(req.params.id).exec();
+
+      if (u.search.length > 4) {
+        await User.updateOne({ _id: req.params.id }, { $unset: { 'search.0': 1 } });
+      }
       await User.updateOne({ _id: req.params.id }, { $push: { search: req.body } });
-      await User.updateOne({ _id: req.params.id }, { $unset: { 'search.0': 1 } });
       await User.updateOne({ _id: req.params.id }, { $pull: { search: null } });
+
       res.send({ message: 'success' });
     } catch (err) {
       console.log(err);
       res.send({ message: 'error' });
     }
-
-    // await User.findOne({ _id: req.params.Id }).exec((err, user) => {
-    //   if (err) {
-    //     res.send({ message: 'error' });
-    //   } else {
-    //     user.search.push(req.body.query);
-    //     res.send({ message: 'success' });
-    //   }
-    // });
   };
-
-  const editPhoneNumber = async (req, res) => {
-    userId = req.params.user;
-    phoneNumber = req.body.phoneNumber;
-
-    try {
-      await User.updateOne({ _id: userId }, { $set: { phone: phoneNumber } });
-      res.send({ message: 'success' });
-    } catch (err) {
-      res.send({ message: 'error' });
-    }
-  };
-
-  const editEmail = async (req, res) => {
-    userId = req.params.id;
-    email = req.body.email;
-    try {
-      await User.updateOne({ _id: userId }, { $set: { phone: phoneNumber } });
-      res.send({ message: 'success' });
-    } catch (err) {
-      res.send({ message: 'error' });
-    }
-  };
-
-  const getRole = async (req, res) => {
-    await User.findOne({ _id: req.params.id }).exec((err, user) => {
-      if (err) {
-        res.send({ message: err });
-      } else {
-        res.json(user.role);
-      }
-    });
-  };
-
-  const changeRole = async (req, res) => {
-    currentRole = req.body.role;
-    console.log('change role');
-    if (currentRole === 'Admin') {
-      await User.updateOne({ _id: req.params.id }, { $set: { role: 'User' } });
-      console.log('User');
-      res.send({ message: 'success' });
-    } else {
-      await User.updateOne({ _id: req.params.id }, { $set: { role: 'Admin' } });
-      console.log('Admin');
-      res.send({ message: 'success' });
-    }
-  };
-
-  // app.post('/api/image/:id', upload.single('image'), async (req, res, next) => {
-  //   console.log(fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)));
-  //   try {
-  //     await User.updateOne(
-  //       { _id: req.params.id },
-  //       {
-  //         $set: {
-  //           img: {
-  //             data: fs.readFileSync(path.join(__dirname + '/uploads/' + req.file.filename)),
-  //             contentType: 'image/png',
-  //           },
-  //         },
-  //       }
-  //     );
-  //     res.send({ message: 'success' });
-  //   } catch (err) {
-  //     res.send({ message: 'error' });
-  //   }
-  // });
 
   app.get('/api/users', findAllUsers);
   app.get('/api/find-user/:id', findUserById);
@@ -325,14 +216,9 @@ module.exports = (app) => {
   app.post('/api/login', userLogin);
   app.post('/api/follow/:fromId/:toId', addFollowers);
   app.get('/api/find-users/:query', findUsersByName);
-  //app.get('/api/find-user/spotifyId/:id', findUserBySpotifyId);
   app.post('/api/follow-remove/:fromId/:toId', removeFollowers);
   app.get('/api/find-currentuser', findCurrentUser);
   app.get('/api/logout', logout);
   app.post('/api/add-search/:id', addSearch);
   app.get('/api/all-users', findAllUsers);
-  app.post('/api/editPhoneNumber/:id', editPhoneNumber);
-  app.post('/api/editEmail/:id', editEmail);
-  app.get('/api/check-role/:id', getRole);
-  app.post('/api/change-role/:id', changeRole);
 };

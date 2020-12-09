@@ -1,5 +1,3 @@
-const express = require('express');
-var router = express.Router();
 var request = require('request');
 const User = require('../models/user');
 
@@ -130,8 +128,6 @@ module.exports = (app) => {
   //find playlist for user
   app.get('/api/:id/playlists', async (req, res) => {
     await User.findOne({ _id: req.params.id }).exec((err, one) => {
-      console.log(req.params.id);
-      console.log(one);
       if (err) {
         res.send({ message: err });
       } else {
