@@ -35,6 +35,6 @@ require('./controllers/spotify-controller')(app);
 require('./controllers/user-controller')(app);
 require('./controllers/post-controller')(app);
 
-app.listen(8080, () => {
-  console.log('listening to 8080');
-});
+// app.listen(8080, () => {
+//   console.log('listening to 8080');
+// });
