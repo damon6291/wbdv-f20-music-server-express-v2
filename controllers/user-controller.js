@@ -34,31 +34,29 @@ module.exports = (app) => {
     try {
       const newUser = new User(req.body);
 
-      // let username = req.body.userName
-      // let password = req.body.password
-      // // let displayName = req.body.displayName
+      let username = req.body.userName;
+      let password = req.body.password;
+      // let displayName = req.body.displayName
 
-      // // check if username already exists
-      // await User.find({ userName: username }).exec((err, users) => {
-      //   if (!err) {
-      //     // found another user with this name, don't allow registration
-      //     res.send({message: 'error'})
-      //     return;
-      //   }
-      // });
+      const u = await User.find({ userName: username }).exec();
 
-      // // password validation: minimum 5 characters
-      // if (password.length < 5) {
-      //   res.send({message: 'error'})
-      //   return;
-      // }
+      if (u._id !== null) {
+        res.send({ message: 'error' });
+        return;
+      }
 
-      // // password validation: at least one number
-      // const re = /[0-9]/;
-      // if(!re.test(password)) {
-      //   res.send({message: 'error'})
-      //   return;
-      // }
+      // password validation: minimum 5 characters
+      if (password.length < 5) {
+        res.send({ message: 'error' });
+        return;
+      }
+
+      // password validation: at least one number
+      const re = /[0-9]/;
+      if (!re.test(password)) {
+        res.send({ message: 'error' });
+        return;
+      }
 
       await newUser.save();
       res.send({ message: 'success' });
