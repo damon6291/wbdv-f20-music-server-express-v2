@@ -32,36 +32,45 @@ module.exports = (app) => {
 
   const createUser = async (req, res) => {
     try {
-      const newUser = new User(req.body);
-
       let username = req.body.userName;
       let password = req.body.password;
       // let displayName = req.body.displayName
 
       const u = await User.find({ userName: username }).exec();
 
-      if (u._id !== null) {
-        res.send({ message: 'error' });
+      console.log(u, u.length);
+
+      if (u.length > 0) {
+        console.log('1');
+        res.send({ message: 'Same userName exists' });
         return;
       }
 
       // password validation: minimum 5 characters
       if (password.length < 5) {
-        res.send({ message: 'error' });
+        console.log('2');
+        res.send({
+          message: 'Password should be atleast 5 characters including atleast one number.',
+        });
         return;
       }
 
       // password validation: at least one number
       const re = /[0-9]/;
       if (!re.test(password)) {
-        res.send({ message: 'error' });
+        console.log('3');
+        res.send({
+          message: 'Password should be atleast 5 characters including atleast one number.',
+        });
         return;
       }
 
+      const newUser = new User(req.body);
       await newUser.save();
       res.send({ message: 'success' });
     } catch (err) {
-      res.send({ message: 'error' });
+      console.log('4');
+      res.send({ message: 'Please try it again' });
     }
   };
 
