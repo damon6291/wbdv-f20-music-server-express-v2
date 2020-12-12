@@ -8,7 +8,13 @@ module.exports = (app) => {
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
-      proxy: true,
+      cookie: {
+        maxAge: SESSION_MAX_AGE,
+        sameSite: true,
+        httpOnly: true,
+        // 2nd change.
+        secure: true,
+      },
     })
   );
 
