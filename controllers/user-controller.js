@@ -7,6 +7,7 @@ module.exports = (app) => {
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
+      sameSite: 'none',
     })
   );
 
