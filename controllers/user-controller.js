@@ -13,7 +13,6 @@ module.exports = (app) => {
         sameSite: true,
         httpOnly: true,
         // 2nd change.
-        secure: true,
       },
     })
   );
