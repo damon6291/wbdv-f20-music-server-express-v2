@@ -2,12 +2,13 @@ const User = require('../models/user');
 const session = require('express-session');
 
 module.exports = (app) => {
+  app.set('trust proxy', true);
   app.use(
     session({
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
-      sameSite: 'none',
+      proxy: true,
     })
   );
 
