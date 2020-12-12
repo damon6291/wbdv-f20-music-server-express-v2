@@ -10,7 +10,6 @@ module.exports = (app) => {
       saveUninitialized: true,
       cookie: {
         maxAge: SESSION_MAX_AGE,
-        httpOnly: true,
         secure: true,
         // 2nd change.
       },
