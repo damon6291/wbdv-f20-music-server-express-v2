@@ -8,10 +8,10 @@ module.exports = (app) => {
       secret: 'keyboard cat',
       resave: false,
       saveUninitialized: true,
-      cookie: {
-        sameSite: 'none',
-        secute: true,
-      },
+      // cookie: {
+      //   sameSite: 'none',
+      //   secute: true,
+      // },
     })
   );
 

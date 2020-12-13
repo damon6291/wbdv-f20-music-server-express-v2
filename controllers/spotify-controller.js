@@ -11,10 +11,10 @@ module.exports = (app) => {
   var constant_refresh_token =
     'AQCKvYSAjSY4q9_86018kjOuzA46cy2i8_Tz6WAO-V72pXtxr2RJcupWNxPUodU8k-QifMC6LzxOdG_hMEAwj9FrGSLCvSeWY3MqyNt7vfT4RpwJV51yo7ZCX_3J_CRLsW4';
 
-  // var serverUrl = 'http://localhost:8080/';
-  // var clientUrl = 'http://localhost:3000/';
-  var serverUrl = 'https://wbdv-f20-music-server.herokuapp.com/';
-  var clientUrl = 'https://wbdv-f20-music.herokuapp.com/';
+  var serverUrl = 'http://localhost:8080/';
+  var clientUrl = 'http://localhost:3000/';
+  // var serverUrl = 'https://wbdv-f20-music-server.herokuapp.com/';
+  // var clientUrl = 'https://wbdv-f20-music.herokuapp.com/';
 
   var redirect_uri = `${serverUrl}post_authentication`;
 
